@@ -1,0 +1,4 @@
+﻿interface IInputInterface
+{
+    InputDirection InputKey();
+}
