@@ -7,42 +7,64 @@ using System;
 public class Block : MonoBehaviour
 {
     [SerializeField] private Image image;
+    [SerializeField] private Sprite[] sprite;
     [SerializeField] private BlockType blockType;
+   
 
-    public void SetImage(int num)
-    {
-       int type = (int)(BlockType)Enum.ToObject(typeof(BlockType), num);
+    //テスト
+    public int countID;
+    public bool isMatch= false;
+
+ 
+
+    public void SetImage(BlockType type)
+    {   
         switch (type)
         {
-            case (int)BlockType.Bear:
-                image.color = Color.red;
+            case BlockType.Bear:
+                image.sprite = sprite[0];
+                countID = 4; 
+                blockType = BlockType.Bear;
                 break;
 
             case (int)BlockType.Cat:
-                image.color = Color.blue;
+                image.sprite = sprite[1];
+                countID = 5;
+                blockType = BlockType.Cat;
                 break;
-            case (int)BlockType.Dog:
-                image.color = Color.green;
+
+            case BlockType.Dog:
+                countID = 6;
+                image.sprite = sprite[2];
+                blockType = BlockType.Dog;
                 break;
-            case (int)BlockType.Flog:
-                image.color = Color.black;
-                break;
-            default:
+
+            case BlockType.Flog:
+                countID = 9;
+                image.sprite = sprite[3];
+                blockType = BlockType.Flog;
                 break;
         }
 
-
     }
 
+    public BlockType type()
+    {
+        return blockType;
+    }
+
+    //5*5で画面描画し、ユーザーがセルをタッチした場合にそのフリックの距離に合わせて照合や合成をするか、
+    //フリック自体はアニメーションででkリウ
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        int count =UnityEngine.Random.Range(0, 4);
+        BlockType type = (BlockType)count;
+        SetImage(type);
     }
 
-    // Update is called once per frame
     void Update()
     {
         

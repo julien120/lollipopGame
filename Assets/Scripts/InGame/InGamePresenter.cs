@@ -12,14 +12,31 @@ public class InGamePresenter : MonoBehaviour
 
     private void Awake()
     {
-        inGameModel.IOChangedState.Subscribe(IOChangedState => inGameView.ApplyBlock(IOChangedState.Item2, IOChangedState.Item1));
-        inGameModel.IOInGameState.Subscribe(IOInGameState => inGameView.InGameState(IOInGameState));
+
         inGameModel.Initialize();
 
-        
+        inGameView.IOStartPos.Subscribe(IOStartPos => inGameModel.Idle(IOStartPos));
+        inGameView.IOMovePos.Subscribe(IOMovePos => inGameModel.MoveBlock(IOMovePos));
+
+        inGameView.IOTransitionState.Subscribe(_ => inGameModel.TransitionState());
+        inGameView.IOMatchBlock.Subscribe(_ => inGameModel.MatchBlock());
+        inGameView.IOAddBlock.Subscribe(_ => inGameModel.AddBlock());
+
+        inGameModel.IOTimerCount.Subscribe(IOTimerCount => inGameView.SetTimer(IOTimerCount));
+        inGameModel.IOScore.Subscribe(IOScore => inGameView.SetScore(IOScore));
     }
 
+
     private void Start()
+    {
+        this.UpdateAsObservable()
+            .Subscribe(_ => {
+                inGameModel.IOInGameState.Subscribe(x => inGameView.InGameState(x));
+
+            });
+    }
+
+    private void Update()
     {
         
     }
