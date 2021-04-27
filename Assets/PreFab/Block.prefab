@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3362616911175541435}
   - component: {fileID: 3127905291174873343}
   - component: {fileID: 5048119288707216639}
+  - component: {fileID: 2666647469806510287}
   m_Layer: 5
   m_Name: Block
   m_TagString: Untagged
@@ -34,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 354, y: 330}
+  m_AnchoredPosition: {x: -2.84, y: -2.11}
+  m_SizeDelta: {x: 584.64, y: 545.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3127905291174873343
 CanvasRenderer:
@@ -65,7 +66,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 3eaf34100f0ac47fa830d9d699362ea8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 278b2c10dc81f4abf90aecb6e848e11d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -74,3 +75,23 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &2666647469806510287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8976722522245053243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e373d120c67496699e4eea677467c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 5048119288707216639}
+  sprite:
+  - {fileID: 21300000, guid: 73cf100d96dd04205a82ac2f44305bc9, type: 3}
+  - {fileID: 21300000, guid: 3c0ab47277a804dcd940db9de506b013, type: 3}
+  - {fileID: 21300000, guid: 01760fb6999084e3ea011ad327a623c7, type: 3}
+  - {fileID: 21300000, guid: 1afe3f15af0d1436790dc913414b9f49, type: 3}
+  blockType: 0
+  countID: 0
