@@ -7,62 +7,74 @@ using UniRx;
 using UniRx.Triggers;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using TMPro;
 
 public class InGameView : MonoBehaviour
 {
     //スクリプト参照
     [SerializeField] private IInputInterface iInputInterface;
     [SerializeField] private GameObject blockPrefab;
-    [SerializeField] private Transform ParentBlock;
-    [SerializeField] private InGameState inGameState;
+    [SerializeField] private Transform parentBlock;
 
     //オブジェクト参照
     [SerializeField] private Text timerText;
     [SerializeField] private Text feverText;
-    [SerializeField] private Text ScoreText;
+    [SerializeField] private Text scoreText;
     [SerializeField] private Image fillImage; //タイマーゲージ
     //[SerializeField] private ParticleSystem gaugeMaxEffect;
 
-    //イベント発火 //まだ使用してない
+    //オブジェクト参照：ダイアログ
+    [SerializeField] private Button restartButton;
+    [SerializeField] private Button backTitleButton;
+    [SerializeField] private Transform borderDialog;
+    [SerializeField] private TextMeshProUGUI totalScoreText;
+    [SerializeField] private TextMeshProUGUI totalComboText;
+    [SerializeField] private TextMeshProUGUI totalSynthelizeText;
+    private bool isFlag = true;
+
+
+    //インターフェース使ってPC/スマホ対応するとき用 //まだ使用してない
     private readonly Subject<InputDirection> inputKeySubject = new Subject<InputDirection>();
     public IObservable<InputDirection> InputKeySubject => inputKeySubject;
 
-    //idle
+    //-idle
     private readonly Subject<Vector2> startPos = new Subject<Vector2>();
     public IObservable<Vector2> IOStartPos => startPos;
 
-    //move
+    //-move
     private readonly Subject<Vector2> movePos = new Subject<Vector2>();
     public IObservable<Vector2> IOMovePos => movePos;
 
-    //EndMove
+    //-EndMove
     private readonly Subject<Unit> transitionState = new Subject<Unit>();
     public IObservable<Unit> IOTransitionState => transitionState;
 
-    //MatchBlock
+    //-MatchBlock
     private readonly Subject<Unit> matchBlock = new Subject<Unit>();
     public IObservable<Unit> IOMatchBlock => matchBlock;
 
-    //addBlock
+    //-addBlock
     private readonly Subject<Unit> addBlock = new Subject<Unit>();
     public IObservable<Unit> IOAddBlock => addBlock;
 
     //デバック
     [SerializeField] private Text stateUI;
 
-
-    // Start is called before the first frame update
     void Start()
     {
-        //JudgePlatform();
+        restartButton.onClick.AddListener(SceneController.Instance.LoadInGameScene);
+        backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
+        borderDialog.transform.localScale = Vector3.zero;
 
+        //後々使うかも
         this.UpdateAsObservable()
             .Subscribe(_ =>{
-          //     InGameState(gameState.Value);
+          
 
             });
     }
 
+    //デバック時はmodelのインスペクター上で確認する
     public void InGameState(InGameState state)
     {
         switch (state)
@@ -101,7 +113,7 @@ public class InGameView : MonoBehaviour
 
     public void SetScore(int score)
     {
-        ScoreText.text = $"Score: {score}";
+        scoreText.text = $"Score: {score}";
     }
 
     public void SetFeverGauge(int feverScore)
@@ -135,12 +147,11 @@ public class InGameView : MonoBehaviour
     private void MatchBlocks()
     {
         matchBlock.OnNext(Unit.Default);
-
     }
 
     private async UniTask AddBlocks()
     {
-        await UniTask.Delay(1000); // 千分の一秒単位で2秒
+        await UniTask.Delay(1000); 
         addBlock.OnNext(Unit.Default);
     }
 
@@ -152,8 +163,22 @@ public class InGameView : MonoBehaviour
     /// </summary>
     public void GameOver()
     {
-       
+        
+        if (isFlag)
+        { 
+            borderDialog.transform.DOScale(1f, 0.6f).SetEase(Ease.OutSine);
+            totalComboText.DOCounter(0, 30, 1f).SetEase(Ease.Linear);
+            totalSynthelizeText.DOCounter(0, 12, 1f).SetEase(Ease.Linear).SetDelay(1f);
+
+            totalScoreText.DOCounter(0, 12345, 3f).SetEase(Ease.Linear).SetDelay(2.5f); ;
+
+
+        }
+        isFlag = false;
+
     }
+
+
 
 
     //test書き
