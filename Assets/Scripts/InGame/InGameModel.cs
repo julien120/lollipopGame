@@ -32,6 +32,8 @@ public class InGameModel : MonoBehaviour
     public ReactiveProperty<InGameState> inGameState = new ReactiveProperty<InGameState>();
     public IObservable<InGameState> IOInGameState => inGameState;
 
+
+
     //Block座標
     private Block[,] blockQueue;
     private Block startPosition;
@@ -122,7 +124,8 @@ public class InGameModel : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO:コードの修正、
+    /// TODO:ボタンを押している間は絶えずMoveBlockメソッドが呼ばれるため、マス移動する度にChangeBlockが呼ばれる。
+    /// 
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -150,14 +153,25 @@ public class InGameModel : MonoBehaviour
 
         if (endPosition != startPosition)
         {
+            startPosition.transform.DOScale(new Vector3(0.4f, 0.4f, 0.4f), 0.1f);
+            //この処理のDOTWeenが終わるまで次のメソッド呼び出しを待つとかやるとよき？
             ChangeBlock(startPosition, endPosition);
-        }  
+        }
+        
     }
 
-    public void TransitionState()
+    public async UniTaskVoid TransitionState()
     {
+        await ReturnScale();
         inGameState.Value = InGameState.MatchBlocks;
     }
+
+    public async UniTask ReturnScale()
+    {
+        startPosition.transform.DOScale(new Vector3(0.3f, 0.3f, 0.3f), 0.1f);
+        await UniTask.Delay(600);
+    }
+
 
     /// <summary>
     /// 引数1と引数2を移動させる
@@ -183,11 +197,14 @@ public class InGameModel : MonoBehaviour
     // MoveBlockAsync().Forget();
     private async UniTaskVoid MoveBlockAsync(Block startBlock, Block endBlock)
     {
-        await startBlock.transform.DOMove(endBlock.transform.position, 0.5f).ToUniTask();
-        await endBlock.transform.DOMove(startBlock.transform.position, 0.5f).ToUniTask();
-        await UniTask.Delay(30);
+       
+        //awaitをつけなかったらいい感じにanimationするようになったが、一方で早く動かすとアウト！
+        endBlock.transform.DOMove(startBlock.transform.position, 0.3f);
+       
+        await startBlock.transform.DOMove(endBlock.transform.position, 0.3f);
+        //await UniTask.DelayFrame(1);
 
-        //TODO:ここの処理が終わってから合成に移行するという処理を加えなくてはいけない
+        //await startBlock.transform.DOScale(new Vector3(0.3f, 0.3f, 0.3f), 0.3f);
     }
 
 
@@ -322,8 +339,18 @@ public class InGameModel : MonoBehaviour
         {
             //ゲームオーバー
             inGameState.Value = InGameState.GameOver;
-        }
-        
+        }  
     }
+
+    /// <summary>
+    /// 1.scoreをリセット
+    /// 2.再描画する際に既存のBlockインスタンスを削除
+    /// </summary>
+    private void RestartInGame()
+    {
+
+
+    }
+
 
 }

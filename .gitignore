@@ -73,3 +73,5 @@ crashlytics-build.properties
 # 追加
 /[Aa]ssets/Plugins/
 /[Aa]ssets/Resources/Font/
+/[Aa]ssets/TextMesh Pro/
+/[Aa]ssets/Resources/DOTween/
