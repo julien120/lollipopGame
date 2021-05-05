@@ -142,6 +142,7 @@ public class InGameModel : MonoBehaviour
                         return;
                     }
 
+                    //endPosition
                     endPosition = BlockPosition(pos);
                 }
             }
@@ -150,14 +151,14 @@ public class InGameModel : MonoBehaviour
         {
             return;
         }
-
+        
         if (endPosition != startPosition)
         {
             startPosition.transform.DOScale(new Vector3(0.4f, 0.4f, 0.4f), 0.1f);
-            //この処理のDOTWeenが終わるまで次のメソッド呼び出しを待つとかやるとよき？
             ChangeBlock(startPosition, endPosition);
         }
         
+
     }
 
     public async UniTaskVoid TransitionState()
@@ -172,6 +173,12 @@ public class InGameModel : MonoBehaviour
         await UniTask.Delay(600);
     }
 
+    public async UniTask TestDelay()
+    {
+       
+        await UniTask.Delay(600);
+    }
+
 
     /// <summary>
     /// 引数1と引数2を移動させる
@@ -180,13 +187,9 @@ public class InGameModel : MonoBehaviour
     /// <param name="endBlock"></param>
     private void ChangeBlock(Block startBlock,Block endBlock)
     {
-        //TODO:ココをUniTaskとDOTweenを使ってなんかアニメーションにする
-        var startPosition = startBlock.transform.position;
-        //startBlock.transform.position = endBlock.transform.position;
-        //endBlock.transform.position = startPosition;
         MoveBlockAsync(startBlock,endBlock).Forget();
 
-        // 行列を更新する
+
         var startBlockPos = GetBlockPos(startBlock);
         var endBlockPos = GetBlockPos(endBlock);
         blockQueue[(int)startBlockPos.x, (int)startBlockPos.y] = endBlock;

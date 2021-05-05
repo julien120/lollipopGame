@@ -18,7 +18,7 @@ public class InGameView : MonoBehaviour
 
     //オブジェクト参照
     [SerializeField] private Text timerText;
-    [SerializeField] private Text feverText;
+    [SerializeField] private Text userNameText;
     [SerializeField] private Text scoreText;
     [SerializeField] private Image fillImage; //タイマーゲージ
     //[SerializeField] private ParticleSystem gaugeMaxEffect;
@@ -30,7 +30,7 @@ public class InGameView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI totalComboText;
     [SerializeField] private TextMeshProUGUI totalSynthelizeText;
-    private bool isFlag = true;
+    private bool isFlag { get; set; } = true;//TODO変更
 
 
     //インターフェース使ってPC/スマホ対応するとき用 //まだ使用してない
@@ -65,6 +65,12 @@ public class InGameView : MonoBehaviour
         restartButton.onClick.AddListener(SceneController.Instance.LoadInGameScene);
         backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
         borderDialog.transform.localScale = Vector3.zero;
+
+        if (PlayFabController.name == null)
+        {
+            return;
+        }
+        userNameText.text = PlayFabController.name;
 
         //後々使うかも
         this.UpdateAsObservable()
@@ -118,8 +124,11 @@ public class InGameView : MonoBehaviour
 
     public void SetFeverGauge(int feverScore)
     {
-        feverText.text = $"Fever: {feverScore}";
+        // $"Fever: {feverScore}";
     }
+
+
+
 
     private void Idle()
     {

@@ -1,4 +1,4 @@
 ﻿interface IInputInterface
 {
-    InputDirection InputKey();
+    InputDirection InputTouchscreen();
 }

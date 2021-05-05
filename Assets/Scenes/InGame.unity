@@ -727,7 +727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &836587855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -827,7 +827,7 @@ MonoBehaviour:
     type: 3}
   parentBlock: {fileID: 0}
   timerText: {fileID: 126328875}
-  feverText: {fileID: 1569955810}
+  userNameText: {fileID: 1569955810}
   scoreText: {fileID: 956199147}
   fillImage: {fileID: 5409954}
   restartButton: {fileID: 1714468169}
@@ -1787,7 +1787,7 @@ GameObject:
   - component: {fileID: 1569955811}
   - component: {fileID: 1569955810}
   m_Layer: 5
-  m_Name: ChainCountText
+  m_Name: UserNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1845,7 +1845,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 9999
+  m_Text: hoge
 --- !u!222 &1569955811
 CanvasRenderer:
   m_ObjectHideFlags: 0
