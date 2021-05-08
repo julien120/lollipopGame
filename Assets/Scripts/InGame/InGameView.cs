@@ -57,8 +57,10 @@ public class InGameView : MonoBehaviour
     private readonly Subject<Unit> addBlock = new Subject<Unit>();
     public IObservable<Unit> IOAddBlock => addBlock;
 
-    //デバック
-    [SerializeField] private Text stateUI;
+    //test
+    [SerializeField] private int highScore;
+    private readonly Subject<int> requestUserScore = new Subject<int>();
+    public IObservable<int> IORequestUserScore => requestUserScore;
 
     void Start()
     {
@@ -105,7 +107,7 @@ public class InGameView : MonoBehaviour
                 GameOver();
                 break;
         }
-        stateUI.text = state.ToString();
+        //stateUI.text = state.ToString();
     }
 
 
@@ -120,6 +122,7 @@ public class InGameView : MonoBehaviour
     public void SetScore(int score)
     {
         scoreText.text = $"Score: {score}";
+        highScore = score;
     }
 
     public void SetFeverGauge(int feverScore)
@@ -168,7 +171,7 @@ public class InGameView : MonoBehaviour
     /// <summary>
     /// 1.ポップアップを表示
     /// 2.スコアを表示(スコアオブジェクトにはもう一度遊ぶボタンを付与)
-    /// 3.
+    /// 3.サーバーにscoreを送信する
     /// </summary>
     public void GameOver()
     {
@@ -176,29 +179,17 @@ public class InGameView : MonoBehaviour
         if (isFlag)
         { 
             borderDialog.transform.DOScale(1f, 0.6f).SetEase(Ease.OutSine);
-            totalComboText.DOCounter(0, 30, 1f).SetEase(Ease.Linear);
-            totalSynthelizeText.DOCounter(0, 12, 1f).SetEase(Ease.Linear).SetDelay(1f);
+            totalComboText.DOCounter(0, 999, 1f).SetEase(Ease.Linear);
+            totalSynthelizeText.DOCounter(0, 999, 1f).SetEase(Ease.Linear).SetDelay(1f);
 
-            totalScoreText.DOCounter(0, 12345, 3f).SetEase(Ease.Linear).SetDelay(2.5f); ;
-
-
+            totalScoreText.DOCounter(0, highScore, 3f).SetEase(Ease.Linear).SetDelay(2.5f); ;
         }
         isFlag = false;
-
+        if (!isFlag)
+        {
+            requestUserScore.OnNext(highScore);
+        }
     }
-
-
-
-
-    //test書き
-    // MoveBlockAsync().Forget();
-    private async UniTaskVoid MoveBlockAsync()
-    {
-        await transform.DOMove(new Vector3(0, 2, 0), 5).ToUniTask();
-        await UniTask.Delay(500);
-    }
-
-
 
 
 }

@@ -14,7 +14,7 @@ public class InGameModel : MonoBehaviour
     public const int rowStage = 5;
     public const int colStage = 5;
     private const int MachCount = 3;
-    private float totalTime = 90;
+    public float totalTime = 90;
 
     //通知発火
     private readonly ReactiveProperty<int> score = new ReactiveProperty<int>();
@@ -32,8 +32,6 @@ public class InGameModel : MonoBehaviour
     public ReactiveProperty<InGameState> inGameState = new ReactiveProperty<InGameState>();
     public IObservable<InGameState> IOInGameState => inGameState;
 
-
-
     //Block座標
     private Block[,] blockQueue;
     private Block startPosition;
@@ -43,6 +41,9 @@ public class InGameModel : MonoBehaviour
     public Block blockInstance;
     [SerializeField] private GameObject blockPrefab;
     [SerializeField] private Transform ParentBlock;
+
+    //test
+    private bool isFlag { get; set; } = true;
 
     public void Initialize()
     {
@@ -124,8 +125,7 @@ public class InGameModel : MonoBehaviour
     }
 
     /// <summary>
-    /// TODO:ボタンを押している間は絶えずMoveBlockメソッドが呼ばれるため、マス移動する度にChangeBlockが呼ばれる。
-    /// 
+
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -247,8 +247,12 @@ public class InGameModel : MonoBehaviour
                         Destroy(blockQueue[i + 1, j]);
                         Destroy(blockQueue[i - 1, j]);
 
-                        SetScore(blockQueue[i, j].countID);
-                }
+                        if (isFlag == true) { 
+                            SetScore(blockQueue[i, j].countID);
+                        
+                        }
+                        isFlag = false;
+                   }
                 
             }
         }
@@ -267,18 +271,23 @@ public class InGameModel : MonoBehaviour
                     Destroy(blockQueue[i, j + 1]);
                     Destroy(blockQueue[i, j - 1]);
 
-                    //TODO:1フレームに何回も呼ばれているから一回だけ呼ばれるようにしたい
-                    SetScore(blockQueue[i, j].countID);
+                    if (isFlag == true)
+                    {
+                        SetScore(blockQueue[i, j].countID);
+
+                    }
+                    isFlag = false;
 
                 }
             }
         }
         inGameState.Value = InGameState.AddBlocks;
+        
     }
 
     public void SetScore(int blockValue)
     {
-        score.Value += blockValue;
+        score.Value += blockValue*20;
     }
 
     /// <summary>
@@ -309,29 +318,11 @@ public class InGameModel : MonoBehaviour
             blockQueue[x, y] = blockInstance;
 
         }
-
-
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        totalTime = 90;
-        this.UpdateAsObservable()
-            .Subscribe(_ =>
-            {
-                
-            });
-    }
-
-    private void Update()
-    {
-        SetTimer();
-
+        isFlag = true;
 
     }
 
-    private void SetTimer()
+    public void SetTimer()
     {
         if (totalTime >= 0)
         {
@@ -345,15 +336,7 @@ public class InGameModel : MonoBehaviour
         }  
     }
 
-    /// <summary>
-    /// 1.scoreをリセット
-    /// 2.再描画する際に既存のBlockインスタンスを削除
-    /// </summary>
-    private void RestartInGame()
-    {
 
-
-    }
 
 
 }

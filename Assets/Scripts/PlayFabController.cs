@@ -90,7 +90,7 @@ public class PlayFabController : MonoBehaviour
     }
 
 
-    void UpdateUserScoreData(int score)
+    public void UpdateUserScoreData(int score)
     {
         PlayFabClientAPI.UpdateUserData(
             new UpdateUserDataRequest
@@ -162,6 +162,12 @@ public class PlayFabController : MonoBehaviour
     {
         loginCanvas.SetActive(true);
         signUpCanvas.SetActive(false);
+    }
+
+    public void PressSignupView()
+    {
+        loginCanvas.SetActive(false);
+        signUpCanvas.SetActive(true);
     }
 
 
