@@ -53,6 +53,10 @@ public class InGameView : MonoBehaviour
     private readonly Subject<Unit> matchBlock = new Subject<Unit>();
     public IObservable<Unit> IOMatchBlock => matchBlock;
 
+    //-DestroyBlock
+    private readonly Subject<Unit> destroyBlock = new Subject<Unit>();
+    public IObservable<Unit> IODestroyBlock => destroyBlock;
+
     //-addBlock
     private readonly Subject<Unit> addBlock = new Subject<Unit>();
     public IObservable<Unit> IOAddBlock => addBlock;
@@ -97,6 +101,10 @@ public class InGameView : MonoBehaviour
 
             case global::InGameState.MatchBlocks:
                 MatchBlocks();
+                break;
+
+            case global::InGameState.DestroyBlock:
+                DestroyBlocks();
                 break;
 
             case global::InGameState.AddBlocks:
@@ -165,6 +173,12 @@ public class InGameView : MonoBehaviour
     {
         await UniTask.Delay(1000); 
         addBlock.OnNext(Unit.Default);
+    }
+
+    private async UniTask DestroyBlocks()
+    {
+        await UniTask.Delay(600);
+        destroyBlock.OnNext(Unit.Default);
     }
 
 

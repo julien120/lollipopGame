@@ -3,6 +3,7 @@
     Idle,
     MoveBlock,
     MatchBlocks,
+    DestroyBlock,
     AddBlocks,
     GameOver,
 }

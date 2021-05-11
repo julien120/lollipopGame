@@ -7,6 +7,7 @@ using System;
 //MVP分離前にunitaskDOTweenをこっちで試す
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class InGameModel : MonoBehaviour
 {
@@ -43,7 +44,8 @@ public class InGameModel : MonoBehaviour
     [SerializeField] private Transform ParentBlock;
 
     //test
-    private bool isFlag { get; set; } = true;
+    private bool isHorFlag { get; set; } = true;
+    private bool isVerFlag { get; set; } = true;
 
     public void Initialize()
     {
@@ -229,9 +231,9 @@ public class InGameModel : MonoBehaviour
     }
 
     /// <summary>
-    /// 3つ重なると削除
+    /// 照合メソッドと削除メソッドとで分割し、MatchBlockでは消すブロックの風呂ぐを立てるだけにする。
     /// </summary>
-    public void MatchBlock()
+    public async UniTaskVoid MatchBlock()
     {
         for (int i = 1; i < 4; i++)
         {
@@ -240,18 +242,15 @@ public class InGameModel : MonoBehaviour
                 
                  if (blockQueue[i, j].type() == blockQueue[i + 1, j].type() && blockQueue[i, j].type() == blockQueue[i-1, j].type())
                   {
-                        Destroy(blockQueue[i, j].gameObject);
-                        Destroy(blockQueue[i + 1, j].gameObject);
-                        Destroy(blockQueue[i - 1, j].gameObject);
-                        Destroy(blockQueue[i, j]);
-                        Destroy(blockQueue[i + 1, j]);
-                        Destroy(blockQueue[i - 1, j]);
+                    blockQueue[i, j].isMatch = true;
+                    blockQueue[i+1, j].isMatch = true;
+                    blockQueue[i-1, j].isMatch = true;
 
-                        if (isFlag == true) { 
+                    if (isHorFlag == true) { 
                             SetScore(blockQueue[i, j].countID);
                         
                         }
-                        isFlag = false;
+                        isHorFlag = false;
                    }
                 
             }
@@ -264,26 +263,76 @@ public class InGameModel : MonoBehaviour
 
                 if (blockQueue[i, j].type() == blockQueue[i , j + 1].type() && blockQueue[i, j].type() == blockQueue[i , j - 1].type())
                 {
-                    Destroy(blockQueue[i, j].gameObject);
-                    Destroy(blockQueue[i , j + 1].gameObject);
-                    Destroy(blockQueue[i , j - 1].gameObject);
-                    Destroy(blockQueue[i, j]);
-                    Destroy(blockQueue[i, j + 1]);
-                    Destroy(blockQueue[i, j - 1]);
-
-                    if (isFlag == true)
+                    blockQueue[i, j].isMatch = true;
+                    blockQueue[i, j + 1].isMatch = true;
+                    blockQueue[i, j-1].isMatch = true;
+                    if (isVerFlag == true)
                     {
                         SetScore(blockQueue[i, j].countID);
 
                     }
-                    isFlag = false;
+                    isVerFlag = false;
 
                 }
             }
         }
-        inGameState.Value = InGameState.AddBlocks;
-        
+
+        //foreach (Block block in blockQueue)
+        //{
+        //    if (block.isMatch)
+        //    {
+        //      await block.gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.3f);
+
+        //    //block.gameObject.transform.DOScale(new Vector3(0.0f, 0.0f, 0.0f), 0.2f);
+                
+
+        //    }
+        //}
+        inGameState.Value = InGameState.DestroyBlock;
+
     }
+
+    //TODO:横縦連鎖のアニメーション
+    //ViewはBlockQueueを知らないので一旦modelでアニメーション
+    public async UniTask DestroyBlockAnimation()
+    {
+        //var hoge = blockQueue[i, j].gameObject.GetComponent<Image>();
+
+        //await UniTask.Delay(600);
+        foreach (Block block in blockQueue)
+        {
+            if (block.isMatch)
+            {
+                await block.gameObject.transform
+                    .DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.15f)
+                    .SetDelay(0.2f)
+                    .OnComplete(() => Destroy(block.gameObject));
+                //await UniTask.Delay(100);
+
+            }
+        }
+
+        //await UniTask.Delay(600);
+        inGameState.Value = InGameState.AddBlocks;
+
+    }
+
+    private async UniTask DeleteBlock()
+    {
+        foreach (Block block in blockQueue)
+        {
+            if (block.isMatch)
+            {
+                
+                Destroy(block);
+                await UniTask.Delay(100);
+
+            }
+        }
+    }
+
+
+
 
     public void SetScore(int blockValue)
     {
@@ -318,7 +367,8 @@ public class InGameModel : MonoBehaviour
             blockQueue[x, y] = blockInstance;
 
         }
-        isFlag = true;
+        isHorFlag = true;
+        isVerFlag = true;
 
     }
 
