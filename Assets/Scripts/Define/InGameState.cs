@@ -5,5 +5,6 @@
     MatchBlocks,
     DestroyBlock,
     AddBlocks,
+    ChainBlocks,
     GameOver,
 }

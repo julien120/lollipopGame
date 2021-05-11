@@ -61,6 +61,10 @@ public class InGameView : MonoBehaviour
     private readonly Subject<Unit> addBlock = new Subject<Unit>();
     public IObservable<Unit> IOAddBlock => addBlock;
 
+    //-ChainBlock
+    private readonly Subject<Unit> chainBlock = new Subject<Unit>();
+    public IObservable<Unit> IOChainBlock => chainBlock;
+
     //test
     [SerializeField] private int highScore;
     private readonly Subject<int> requestUserScore = new Subject<int>();
@@ -109,6 +113,10 @@ public class InGameView : MonoBehaviour
 
             case global::InGameState.AddBlocks:
                 AddBlocks();
+                break;
+
+            case global::InGameState.ChainBlocks:
+                ChainBlocks();
                 break;
 
             case global::InGameState.GameOver:
@@ -179,6 +187,12 @@ public class InGameView : MonoBehaviour
     {
         await UniTask.Delay(600);
         destroyBlock.OnNext(Unit.Default);
+    }
+
+    private async UniTask ChainBlocks()
+    {
+        await UniTask.Delay(600);
+        chainBlock.OnNext(Unit.Default);
     }
 
 

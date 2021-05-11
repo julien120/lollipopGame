@@ -24,6 +24,7 @@ public class InGamePresenter : MonoBehaviour
         inGameView.IOAddBlock.Subscribe(_ => inGameModel.AddBlock());
 
         inGameView.IODestroyBlock.Subscribe(_ => inGameModel.DestroyBlockAnimation());
+        inGameView.IOChainBlock.Subscribe(_ => inGameModel.ChainBlock());
         inGameModel.IOTimerCount.Subscribe(IOTimerCount => inGameView.SetTimer(IOTimerCount));
         inGameModel.IOScore.Subscribe(IOScore => inGameView.SetScore(IOScore));
 

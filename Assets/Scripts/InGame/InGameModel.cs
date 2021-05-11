@@ -46,6 +46,7 @@ public class InGameModel : MonoBehaviour
     //test
     private bool isHorFlag { get; set; } = true;
     private bool isVerFlag { get; set; } = true;
+    private bool isChainFlag { get; set; } = false;
 
     public void Initialize()
     {
@@ -75,6 +76,7 @@ public class InGameModel : MonoBehaviour
         {
             for (var i = 0; i < colStage; i++)
             {
+                if(blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)] == null) { return; }
                 if (blockQueue[i, j] == blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)])
                 {
                     if (blockQueue[i, j] == null)
@@ -235,24 +237,32 @@ public class InGameModel : MonoBehaviour
     /// </summary>
     public async UniTaskVoid MatchBlock()
     {
+        isMatchBlock().Forget();
+        inGameState.Value = InGameState.DestroyBlock;
+
+    }
+
+    private async UniTaskVoid isMatchBlock()
+    {
         for (int i = 1; i < 4; i++)
         {
             for (int j = 0; j < rowStage; j++)
             {
-                
-                 if (blockQueue[i, j].type() == blockQueue[i + 1, j].type() && blockQueue[i, j].type() == blockQueue[i-1, j].type())
-                  {
-                    blockQueue[i, j].isMatch = true;
-                    blockQueue[i+1, j].isMatch = true;
-                    blockQueue[i-1, j].isMatch = true;
 
-                    if (isHorFlag == true) { 
-                            SetScore(blockQueue[i, j].countID);
-                        
-                        }
-                        isHorFlag = false;
-                   }
-                
+                if (blockQueue[i, j].type() == blockQueue[i + 1, j].type() && blockQueue[i, j].type() == blockQueue[i - 1, j].type())
+                {
+                    blockQueue[i, j].isMatch = true;
+                    blockQueue[i + 1, j].isMatch = true;
+                    blockQueue[i - 1, j].isMatch = true;
+
+                    if (isHorFlag == true)
+                    {
+                        SetScore(blockQueue[i, j].countID);
+
+                    }
+                    isHorFlag = false;
+                }
+
             }
         }
 
@@ -261,11 +271,11 @@ public class InGameModel : MonoBehaviour
             for (int j = 1; j < 4; j++)
             {
 
-                if (blockQueue[i, j].type() == blockQueue[i , j + 1].type() && blockQueue[i, j].type() == blockQueue[i , j - 1].type())
+                if (blockQueue[i, j].type() == blockQueue[i, j + 1].type() && blockQueue[i, j].type() == blockQueue[i, j - 1].type())
                 {
                     blockQueue[i, j].isMatch = true;
                     blockQueue[i, j + 1].isMatch = true;
-                    blockQueue[i, j-1].isMatch = true;
+                    blockQueue[i, j - 1].isMatch = true;
                     if (isVerFlag == true)
                     {
                         SetScore(blockQueue[i, j].countID);
@@ -276,25 +286,12 @@ public class InGameModel : MonoBehaviour
                 }
             }
         }
-
-        //foreach (Block block in blockQueue)
-        //{
-        //    if (block.isMatch)
-        //    {
-        //      await block.gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.3f);
-
-        //    //block.gameObject.transform.DOScale(new Vector3(0.0f, 0.0f, 0.0f), 0.2f);
-                
-
-        //    }
-        //}
-        inGameState.Value = InGameState.DestroyBlock;
-
     }
 
+
     //TODO:横縦連鎖のアニメーション
-    //ViewはBlockQueueを知らないので一旦modelでアニメーション
-    public async UniTask DestroyBlockAnimation()
+    //async UniTask 一個ずつ処理する場合はシーケンスをawaitする。
+    public void DestroyBlockAnimation()
     {
         //var hoge = blockQueue[i, j].gameObject.GetComponent<Image>();
 
@@ -303,34 +300,79 @@ public class InGameModel : MonoBehaviour
         {
             if (block.isMatch)
             {
-                await block.gameObject.transform
-                    .DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.15f)
-                    .SetDelay(0.2f)
-                    .OnComplete(() => Destroy(block.gameObject));
+                //await block.gameObject.transform
+                //    .DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.15f)
+                //    .SetDelay(0.2f)
+                //    .OnComplete(() => Destroy(block.gameObject));
                 //await UniTask.Delay(100);
 
+                Sequence seq = DOTween.Sequence();
+                if (block == null) { return; }
+                //await seq
+                seq
+                    .Append(block.gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.1f))
+                    .SetDelay(0.2f)
+                    //.Append(block.gameObject.transform.DOScale(new Vector3(0f, 0f, 0f), 0.1f))
+                    .SetDelay(0.05f)
+                    .OnComplete(() =>
+                    {
+                        if(block.gameObject == null) { return; }
+
+                        Destroy(block.gameObject);
+                    });
+
+
+                 //   .OnComplete(() => Destroy(block.gameObject));
             }
         }
 
-        //await UniTask.Delay(600);
         inGameState.Value = InGameState.AddBlocks;
+        //await UniTask.Delay(600);
 
     }
 
-    private async UniTask DeleteBlock()
+    /// <summary>
+    /// 1.コンボ表示
+    /// 2.パーティクル
+    /// 3.削除
+    /// </summary>
+    private void DestroyBlock(Block block)
     {
+        Destroy(block.gameObject);
+    }
+
+    
+
+    /// <summary>
+    /// Chain時にIdleに行かずMatch-destory-addでループする処理
+    /// TODO二度目のchainになると恐ろしく重くなる
+    /// </summary>
+    public async UniTaskVoid ChainBlock()
+    {
+        
+        isMatchBlock().Forget();
+        await UniTask.Delay(700);
+        int count = 0;
+        isChainFlag = false;
         foreach (Block block in blockQueue)
         {
+            count++;
+            
             if (block.isMatch)
             {
-                
-                Destroy(block);
-                await UniTask.Delay(100);
-
+                isChainFlag = true;
+                inGameState.Value = InGameState.DestroyBlock;
+               
+               
+            }
+            if (isChainFlag == false && count >= 24)
+            {
+                inGameState.Value = InGameState.Idle;
             }
         }
-    }
 
+       
+    }
 
 
 
@@ -356,8 +398,9 @@ public class InGameModel : MonoBehaviour
             }
         }
 
-        inGameState.Value = InGameState.Idle;
+        inGameState.Value = InGameState.ChainBlocks;
     }
+
 
     private void FindGenerationPos(int x ,int y)
     {
