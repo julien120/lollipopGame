@@ -135,17 +135,22 @@ public class InGameModel : MonoBehaviour
     /// <param name="end"></param>
     public void MoveBlock(Vector2 pos)
     {
+        if ((int)pos.x / 150 >= 5 || ((int)pos.y / 150 - 1) >= 5) { return; }
+        if ((int)pos.x / 150 < 0 || ((int)pos.y / 150 - 1) < 0) { return; }
+
         for (var j = 0; j < rowStage; j++)
         {
             for (var i = 0; i < colStage; i++)
             {
-                if (blockQueue[i, j] == blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)])
+                
+                 if (blockQueue[i, j] == blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)])
                 {
+                    
                     if (blockQueue[i, j] == null)
                     {
                         return;
                     }
-
+                    
                     //endPosition
                     endPosition = BlockPosition(pos);
                 }
