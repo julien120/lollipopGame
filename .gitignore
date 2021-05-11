@@ -71,6 +71,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # 追加
-/[Aa]ssets/Resources/Font/
+#/[Aa]ssets/Resources/Font/
 /[Aa]ssets/TextMesh Pro/
 /[Aa]ssets/Resources/DOTween/
