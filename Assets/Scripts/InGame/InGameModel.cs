@@ -7,6 +7,7 @@ using System;
 //MVP分離前にunitaskDOTweenをこっちで試す
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class InGameModel : MonoBehaviour
 {
@@ -283,6 +284,30 @@ public class InGameModel : MonoBehaviour
         }
         inGameState.Value = InGameState.AddBlocks;
         
+    }
+
+    //TODO:横縦連鎖のアニメーション
+    //ViewはBlockQueueを知らないので一旦modelでアニメーション
+    private async UniTask DestroyBlockAnimation(int i, int j)
+    {
+        //var hoge = blockQueue[i, j].gameObject.GetComponent<Image>();
+        if (blockQueue[i, j].gameObject == null) { return; }
+
+        blockQueue[i, j].gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.3f);
+        blockQueue[i, j - 1].gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.3f);
+
+        await blockQueue[i, j + 1].gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.3f);
+
+        blockQueue[i, j + 1].gameObject.transform.DOScale(new Vector3(0.0f, 0.0f, 0.0f), 0.2f);
+        blockQueue[i, j - 1].gameObject.transform.DOScale(new Vector3(0.0f, 0.0f, 0.0f), 0.2f);
+        await blockQueue[i, j].gameObject.transform.DOScale(new Vector3(0.0f, 0.0f, 0.0f), 0.2f);
+        Destroy(blockQueue[i, j].gameObject);
+        Destroy(blockQueue[i, j + 1].gameObject);
+        Destroy(blockQueue[i, j - 1].gameObject);
+        Destroy(blockQueue[i, j]);
+        Destroy(blockQueue[i, j + 1]);
+        Destroy(blockQueue[i, j - 1]);
+
     }
 
     public void SetScore(int blockValue)
