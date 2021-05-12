@@ -38,6 +38,8 @@ public class InGameModel : MonoBehaviour
     private Block startPosition;
     private Block endPosition;
 
+    [SerializeField] private Transform blockPos;
+
     //参照
     public Block blockInstance;
     [SerializeField] private GameObject blockPrefab;
@@ -48,6 +50,9 @@ public class InGameModel : MonoBehaviour
     private bool isVerFlag { get; set; } = true;
     private bool isChainFlag { get; set; } = false;
 
+    private int combo { get; set; } = 0;
+    private int highCombo { get; set; } =0;
+
     public void Initialize()
     {
         blockQueue = new Block[rowStage, colStage];
@@ -56,8 +61,11 @@ public class InGameModel : MonoBehaviour
         {
             for (var i = 0; i < colStage; i++)
             {
-                blockInstance = Instantiate(blockPrefab, new Vector2(85 + (j * 150), 223 + i * 150), Quaternion.identity, ParentBlock).GetComponent<Block>();
+                //mainCameraのrenderModeを元に戻す場合はこれ
+              blockInstance = Instantiate(blockPrefab, new Vector2(85 + (j * 150), 223 + i * 150), Quaternion.identity, ParentBlock).GetComponent<Block>();
+              //  blockInstance = Instantiate(blockPrefab, new Vector3(blockPos.position.x * j + 85, blockPos.position.y * i + blockPos.position.y, blockPos.position.z), Quaternion.identity, ParentBlock).GetComponent<Block>();
                 blockQueue[j, i] = blockInstance;
+                
             }
         }
         inGameState.Value = InGameState.Idle;
@@ -71,12 +79,13 @@ public class InGameModel : MonoBehaviour
     {
         //var X = (int)pos.x / 150;
         //var Y = (int)pos.y / 150 - 1;
+        if ((int)pos.x / 150 >= 5 || ((int)pos.y / 150 - 1) >= 5) { return; }
+        if ((int)pos.x / 150 < 0 || ((int)pos.y / 150 - 1) < 0) { return; }
 
         for (var j = 0; j < rowStage; j++)
         {
             for (var i = 0; i < colStage; i++)
             {
-                if(blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)] == null) { return; }
                 if (blockQueue[i, j] == blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)])
                 {
                     if (blockQueue[i, j] == null)
@@ -89,11 +98,7 @@ public class InGameModel : MonoBehaviour
             }
         }
 
-        if (blockQueue[(int)pos.x / 150, ((int)pos.y / 150 - 1)] == null)
-        {
-            return;
-        }
-
+        combo = 0;
         inGameState.Value = InGameState.MoveBlock;
     }
 
@@ -260,8 +265,10 @@ public class InGameModel : MonoBehaviour
                     blockQueue[i + 1, j].isMatch = true;
                     blockQueue[i - 1, j].isMatch = true;
 
+
                     if (isHorFlag == true)
                     {
+                        
                         SetScore(blockQueue[i, j].countID);
 
                     }
@@ -281,8 +288,14 @@ public class InGameModel : MonoBehaviour
                     blockQueue[i, j].isMatch = true;
                     blockQueue[i, j + 1].isMatch = true;
                     blockQueue[i, j - 1].isMatch = true;
+                    
+                    if (combo > highCombo)
+                    {
+                        highCombo = combo;  
+                    }
                     if (isVerFlag == true)
                     {
+                        
                         SetScore(blockQueue[i, j].countID);
 
                     }
@@ -296,13 +309,14 @@ public class InGameModel : MonoBehaviour
 
     //TODO:横縦連鎖のアニメーション
     //async UniTask 一個ずつ処理する場合はシーケンスをawaitする。
-    public void DestroyBlockAnimation()
+    public async UniTask DestroyBlockAnimation()
     {
         //var hoge = blockQueue[i, j].gameObject.GetComponent<Image>();
 
         //await UniTask.Delay(600);
         foreach (Block block in blockQueue)
         {
+            if (block == null) { return; }
             if (block.isMatch)
             {
                 //await block.gameObject.transform
@@ -310,24 +324,22 @@ public class InGameModel : MonoBehaviour
                 //    .SetDelay(0.2f)
                 //    .OnComplete(() => Destroy(block.gameObject));
                 //await UniTask.Delay(100);
-
+                
                 Sequence seq = DOTween.Sequence();
                 if (block == null) { return; }
-                //await seq
-                seq
-                    .Append(block.gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.1f))
-                    .SetDelay(0.2f)
-                    //.Append(block.gameObject.transform.DOScale(new Vector3(0f, 0f, 0f), 0.1f))
+                await seq
+                //seq.Kill();
+                    .Append(block.gameObject.transform.DOScale(new Vector3(0.35f, 0.35f, 0.35f), 0.05f))
                     .SetDelay(0.05f)
+                    //.Append(block.gameObject.transform.DOScale(new Vector3(0f, 0f, 0f), 0.1f))
+                    //.SetDelay(0.05f)
                     .OnComplete(() =>
                     {
-                        if(block.gameObject == null) { return; }
-
-                        Destroy(block.gameObject);
+                        
+                        DestroyBlock(block).Forget();
                     });
-
-
-                 //   .OnComplete(() => Destroy(block.gameObject));
+                
+                //   .OnComplete(() => Destroy(block.gameObject));
             }
         }
 
@@ -341,16 +353,44 @@ public class InGameModel : MonoBehaviour
     /// 2.パーティクル
     /// 3.削除
     /// </summary>
-    private void DestroyBlock(Block block)
+    private async UniTask DestroyBlock(Block block)
     {
-        Destroy(block.gameObject);
+        block.DrawParticle();
+        //await UniTask.Delay(600);
+        //Destroy(block.gameObject);
+        
+        if (block.isCombo==false)
+        {
+            combo++;
+            Debug.Log(combo/3+combo%3);
+            block.isCombo = true;
+
+        }
+        
+
+        Sequence seq = DOTween.Sequence();
+
+        await seq
+            .SetDelay(0.4f)
+            .OnComplete(() =>
+            {
+
+                block.StopParticle();
+                Destroy(block.gameObject);//このメソッドの呼び出しが終わるまでOnCompleteが終わらないからnullなのにDOTween呼び出しエラーになると
+            });
+
     }
+
+    //fever
+    //何回かコンボするとfeverになる
+    //fever玉を中心に3*3削除する
+    //普通のidleに戻る
 
     
 
     /// <summary>
     /// Chain時にIdleに行かずMatch-destory-addでループする処理
-    /// TODO二度目のchainになると恐ろしく重くなる
+    /// 
     /// </summary>
     public async UniTaskVoid ChainBlock()
     {

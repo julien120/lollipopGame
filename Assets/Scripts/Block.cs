@@ -9,11 +9,13 @@ public class Block : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private Sprite[] sprite;
     [SerializeField] private BlockType blockType;
+    [SerializeField] private ParticleSystem particle;
    
 
     //テスト
     public int countID;
     public bool isMatch= false;
+    public bool isCombo = false;
 
  
 
@@ -46,6 +48,14 @@ public class Block : MonoBehaviour
                 break;
         }
 
+    }
+    public void DrawParticle()
+    {
+        particle.Play();
+    }
+    public void StopParticle()
+    {
+        particle.Stop();
     }
 
     public BlockType type()

@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - hoge
-  - 
+  - Particle
   - 
   - 
   - 
@@ -40,4 +40,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 1871007591
+    locked: 0
+  - name: Particle
+    uniqueID: 3965604543
     locked: 0

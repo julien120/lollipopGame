@@ -122,6 +122,9 @@ public class InGameView : MonoBehaviour
             case global::InGameState.GameOver:
                 GameOver();
                 break;
+
+            default:
+                break;
         }
         //stateUI.text = state.ToString();
     }

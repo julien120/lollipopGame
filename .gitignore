@@ -72,5 +72,6 @@ crashlytics-build.properties
 
 # 追加
 #/[Aa]ssets/Resources/Font/
+/[Aa]ssets/Plugins/ParticleEffectForUGUI-3.3.6/
 /[Aa]ssets/TextMesh Pro/
 /[Aa]ssets/Resources/DOTween/
