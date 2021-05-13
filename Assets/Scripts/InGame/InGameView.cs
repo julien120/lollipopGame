@@ -67,6 +67,9 @@ public class InGameView : MonoBehaviour
 
     //test
     [SerializeField] private int highScore;
+    private int highComboScore =0;
+    private int syntheticScore = 0;
+
     private readonly Subject<int> requestUserScore = new Subject<int>();
     public IObservable<int> IORequestUserScore => requestUserScore;
 
@@ -149,7 +152,17 @@ public class InGameView : MonoBehaviour
         // $"Fever: {feverScore}";
     }
 
-
+    public void SetHigheCombo(int highCombo)
+    {
+        if (highComboScore < highCombo) { 
+             highComboScore = highCombo;
+        }
+    }
+    public void SetSyntheticScore(int syScore)
+    {
+        syntheticScore = syScore;
+    }
+    
 
 
     private void Idle()
@@ -210,8 +223,8 @@ public class InGameView : MonoBehaviour
         if (isFlag)
         { 
             borderDialog.transform.DOScale(1f, 0.6f).SetEase(Ease.OutSine);
-            totalComboText.DOCounter(0, 999, 1f).SetEase(Ease.Linear);
-            totalSynthelizeText.DOCounter(0, 999, 1f).SetEase(Ease.Linear).SetDelay(1f);
+            totalComboText.DOCounter(0, highComboScore, 1f).SetEase(Ease.Linear);
+            totalSynthelizeText.DOCounter(0, syntheticScore, 1f).SetEase(Ease.Linear).SetDelay(1f);
 
             totalScoreText.DOCounter(0, highScore, 3f).SetEase(Ease.Linear).SetDelay(2.5f); ;
         }

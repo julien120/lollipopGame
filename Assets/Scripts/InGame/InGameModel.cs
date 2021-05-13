@@ -51,7 +51,15 @@ public class InGameModel : MonoBehaviour
     private bool isChainFlag { get; set; } = false;
 
     private int combo { get; set; } = 0;
-    private int highCombo { get; set; } =0;
+
+   [SerializeField]private Font font;
+
+
+    private readonly ReactiveProperty<int> highCombo = new ReactiveProperty<int>();
+    public IObservable<int> IOHighCombo => highCombo;
+
+    private readonly ReactiveProperty<int> syntheticScore = new ReactiveProperty<int>();
+    public IObservable<int> IOSyntheticScore => syntheticScore;
 
     public void Initialize()
     {
@@ -97,7 +105,8 @@ public class InGameModel : MonoBehaviour
                 }
             }
         }
-
+        
+        highCombo.Value = 0;
         combo = 0;
         inGameState.Value = InGameState.MoveBlock;
     }
@@ -289,10 +298,6 @@ public class InGameModel : MonoBehaviour
                     blockQueue[i, j + 1].isMatch = true;
                     blockQueue[i, j - 1].isMatch = true;
                     
-                    if (combo > highCombo)
-                    {
-                        highCombo = combo;  
-                    }
                     if (isVerFlag == true)
                     {
                         
@@ -361,12 +366,26 @@ public class InGameModel : MonoBehaviour
         
         if (block.isCombo==false)
         {
+            
             combo++;
-            Debug.Log(combo/3+combo%3);
+            syntheticScore.Value++;
+            if (highCombo.Value < combo / 3 )
+            {
+                highCombo.Value = combo / 3 + combo % 3;
+
+
+                //TODOコンボcountを表示
+                //textをblockの場所に生成し、text内容をcombo / 3 + combo % 3にする
+                //block.transform.position
+                
+                CreateComboText(block.gameObject.transform, combo / 3 + combo % 3);
+               // }
+            }
+           
+
             block.isCombo = true;
 
         }
-        
 
         Sequence seq = DOTween.Sequence();
 
@@ -381,12 +400,28 @@ public class InGameModel : MonoBehaviour
 
     }
 
-    //fever
+    private void CreateComboText(Transform pos,int count)
+    {
+        Text comboText = new GameObject("ComboText").AddComponent<Text>();
+        Canvas canvas = FindObjectOfType<Canvas>();
+        comboText.transform.SetParent(canvas.transform);
+        comboText.font =  font;
+        comboText.alignment = TextAnchor.MiddleCenter;
+        comboText.color = Color.red;
+        comboText.fontSize = 40;
+        comboText.fontStyle = FontStyle.Bold;
+        comboText.text = count.ToString();
+        comboText.rectTransform.position = new Vector2(pos.position.x,pos.position.y);
+      //  comboText.gameObject.AddComponent<>();
+        
+    }
+
+    //TODO:fever
     //何回かコンボするとfeverになる
     //fever玉を中心に3*3削除する
     //普通のidleに戻る
 
-    
+
 
     /// <summary>
     /// Chain時にIdleに行かずMatch-destory-addでループする処理

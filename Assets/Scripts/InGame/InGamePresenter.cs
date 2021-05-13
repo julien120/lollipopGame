@@ -27,8 +27,13 @@ public class InGamePresenter : MonoBehaviour
         inGameView.IOChainBlock.Subscribe(_ => inGameModel.ChainBlock());
         inGameModel.IOTimerCount.Subscribe(IOTimerCount => inGameView.SetTimer(IOTimerCount));
         inGameModel.IOScore.Subscribe(IOScore => inGameView.SetScore(IOScore));
+        inGameModel.IOHighCombo.Subscribe(IOHighCombo => inGameView.SetHigheCombo(IOHighCombo));
+        inGameModel.IOSyntheticScore.Subscribe(IOSyntheticScore => inGameView.SetSyntheticScore(IOSyntheticScore));
+
 
         inGameView.IORequestUserScore.Subscribe(IORequestUserScore => playFabController.UpdateUserScoreData(IORequestUserScore));
+
+        
     }
 
 

@@ -1016,6 +1016,7 @@ MonoBehaviour:
   blockPrefab: {fileID: 8976722522245053243, guid: 5e389211ce4d04169bb9c2ca5785380a,
     type: 3}
   ParentBlock: {fileID: 1154510100}
+  font: {fileID: 12800000, guid: ba47222a284d349f593da7f158e5f48d, type: 3}
 --- !u!4 &953756762
 Transform:
   m_ObjectHideFlags: 0
@@ -1333,7 +1334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1443,7 +1444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 92.819916, y: 60.004944}
+  m_AnchoredPosition: {x: 92.819824, y: 60.004883}
   m_SizeDelta: {x: 183.63983, y: -122.00986}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1197035004
@@ -1999,9 +2000,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 997a43b767814dd0a7642ec9b78cba41, type: 3}
+    m_Font: {fileID: 12800000, guid: ba47222a284d349f593da7f158e5f48d, type: 3}
     m_FontSize: 40
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 4
     m_MaxSize: 40
@@ -2011,7 +2012,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: hoge
+  m_Text: "\u307B\u3052"
 --- !u!222 &1569955811
 CanvasRenderer:
   m_ObjectHideFlags: 0
