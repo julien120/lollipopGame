@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using DG.Tweening;
 
 public class Block : MonoBehaviour
 {
@@ -51,7 +52,12 @@ public class Block : MonoBehaviour
     }
     public void DrawParticle()
     {
-        particle.Play();
+        var sequence = DOTween.Sequence();
+        sequence
+
+                .SetDelay(0.2f)
+                .OnComplete(()=> { particle.Play(); });
+       // particle.Play();
     }
     public void StopParticle()
     {

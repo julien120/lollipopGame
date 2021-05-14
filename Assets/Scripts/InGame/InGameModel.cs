@@ -8,6 +8,8 @@ using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class InGameModel : MonoBehaviour
 {
@@ -43,6 +45,7 @@ public class InGameModel : MonoBehaviour
     //参照
     public Block blockInstance;
     [SerializeField] private GameObject blockPrefab;
+    [SerializeField] private GameObject comboPrefab;
     [SerializeField] private Transform ParentBlock;
 
     //test
@@ -51,8 +54,9 @@ public class InGameModel : MonoBehaviour
     private bool isChainFlag { get; set; } = false;
 
     private int combo { get; set; } = 0;
+    private ComboTextAnimation comboAnimation;
 
-   [SerializeField]private Font font;
+   [SerializeField]private TMP_FontAsset font;
 
 
     private readonly ReactiveProperty<int> highCombo = new ReactiveProperty<int>();
@@ -360,7 +364,7 @@ public class InGameModel : MonoBehaviour
     /// </summary>
     private async UniTask DestroyBlock(Block block)
     {
-        block.DrawParticle();
+        
         //await UniTask.Delay(600);
         //Destroy(block.gameObject);
         
@@ -377,11 +381,14 @@ public class InGameModel : MonoBehaviour
                 //TODOコンボcountを表示
                 //textをblockの場所に生成し、text内容をcombo / 3 + combo % 3にする
                 //block.transform.position
-                
-                CreateComboText(block.gameObject.transform, combo / 3 + combo % 3);
-               // }
+
+                //    CreateComboText(block.gameObject.transform, combo / 3 + combo % 3);
+                // }
+                comboAnimation = Instantiate(comboPrefab, new Vector2(block.gameObject.transform.position.x, block.gameObject.transform.position.y), Quaternion.identity, ParentBlock).GetComponent<ComboTextAnimation>();
+                comboAnimation.Initialize(combo / 3 + combo % 3);
+
             }
-           
+            block.DrawParticle();
 
             block.isCombo = true;
 
@@ -400,21 +407,37 @@ public class InGameModel : MonoBehaviour
 
     }
 
-    private void CreateComboText(Transform pos,int count)
-    {
-        Text comboText = new GameObject("ComboText").AddComponent<Text>();
-        Canvas canvas = FindObjectOfType<Canvas>();
-        comboText.transform.SetParent(canvas.transform);
-        comboText.font =  font;
-        comboText.alignment = TextAnchor.MiddleCenter;
-        comboText.color = Color.red;
-        comboText.fontSize = 40;
-        comboText.fontStyle = FontStyle.Bold;
-        comboText.text = count.ToString();
-        comboText.rectTransform.position = new Vector2(pos.position.x,pos.position.y);
-      //  comboText.gameObject.AddComponent<>();
+    //private void CreateComboText(Transform pos,int count)
+    //{
+    //    Text comboText = new GameObject("ComboText").AddComponent<Text>();
+    //    Canvas canvas = FindObjectOfType<Canvas>();
+    //    comboText.transform.SetParent(canvas.transform);
+    //    comboText.font =  font;
+    //    comboText.alignment = TextAnchor.MiddleCenter;
+    //    comboText.color = Color.red;
+    //    comboText.fontSize = 40;
+    //    comboText.fontStyle = FontStyle.Bold;
+    //    comboText.text = count.ToString();
+    //    comboText.rectTransform.position = new Vector2(pos.position.x,pos.position.y);
+    //  //  comboText.gameObject.AddComponent<>();
         
-    }
+    //}
+
+    //private void CreateComboText(Transform pos, int count)
+    //{
+    //    TextMeshProUGUI comboText = new GameObject("ComboText").AddComponent<TextMeshProUGUI>();
+    //    Canvas canvas = FindObjectOfType<Canvas>();
+    //    comboText.transform.SetParent(canvas.transform);
+    //    comboText.font = font;
+    //    comboText.alignment = (TextAlignmentOptions)TextAnchor.MiddleLeft;
+    //    comboText.color = Color.red;
+    //    comboText.fontSize = 50;
+    //    comboText.fontStyle = (FontStyles)FontStyle.Bold;
+    //    comboText.text = count.ToString();
+    //    comboText.rectTransform.position = new Vector2(pos.position.x, pos.position.y);
+    //    comboText.gameObject.AddComponent<ComboTextAnimation>();
+
+    //}
 
     //TODO:fever
     //何回かコンボするとfeverになる
