@@ -30,7 +30,10 @@ public class InGameView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI totalComboText;
     [SerializeField] private TextMeshProUGUI totalSynthelizeText;
+    [SerializeField] private TextMeshProUGUI feverTextAnimation;
+    private DOTweenTMPAnimator textAnimator;
     private bool isFlag { get; set; } = true;//TODO変更
+    private bool isFeverFlag { get; set; } = true;
 
 
     //インターフェース使ってPC/スマホ対応するとき用 //まだ使用してない
@@ -65,6 +68,10 @@ public class InGameView : MonoBehaviour
     private readonly Subject<Unit> chainBlock = new Subject<Unit>();
     public IObservable<Unit> IOChainBlock => chainBlock;
 
+    //feverBlock
+    private readonly Subject<Unit> addFeverBlock = new Subject<Unit>();
+    public IObservable<Unit> IOfeverBlock => addFeverBlock;
+
     //test
     [SerializeField] private int highScore;
     private int highComboScore =0;
@@ -75,6 +82,7 @@ public class InGameView : MonoBehaviour
 
     void Start()
     {
+        feverTextAnimation.alpha = 0;
         restartButton.onClick.AddListener(SceneController.Instance.LoadInGameScene);
         backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
         borderDialog.transform.localScale = Vector3.zero;
@@ -120,6 +128,10 @@ public class InGameView : MonoBehaviour
 
             case global::InGameState.ChainBlocks:
                 ChainBlocks();
+                break;
+
+            case global::InGameState.AddFeverBlock:
+                AddFeverBlock();
                 break;
 
             case global::InGameState.GameOver:
@@ -174,6 +186,7 @@ public class InGameView : MonoBehaviour
             startPos.OnNext(Input.mousePosition);
             }
         }
+        
     }
 
     private void MoveBlock()
@@ -207,8 +220,35 @@ public class InGameView : MonoBehaviour
 
     private async UniTask ChainBlocks()
     {
+        isFeverFlag = true;
         await UniTask.Delay(600);
         chainBlock.OnNext(Unit.Default);
+    }
+
+    /// <summary>
+    /// modelから通知を受け取り
+    /// feverテキストの描画
+    /// カット演出
+    /// </summary>
+    public void SetFeverTextAnimation()
+    {
+        textAnimator = new DOTweenTMPAnimator(feverTextAnimation);
+        var sequence = DOTween.Sequence();
+   
+        for (int i = 0; i < textAnimator.textInfo.characterCount; i++)
+        {
+            sequence
+                .Append(textAnimator.DOFadeChar(i, 1, 0.1f))
+                .Join(textAnimator.DOPunchCharScale(i, 1.5f, 0.1f))
+                .Play()
+                .OnComplete(() => {
+                    DOVirtual.DelayedCall(1.5f, () => Destroy(feverTextAnimation));
+                    
+                });
+
+        }
+
+       
     }
 
 
@@ -233,6 +273,16 @@ public class InGameView : MonoBehaviour
         {
             requestUserScore.OnNext(highScore);
         }
+    }
+
+    private void AddFeverBlock()
+    {
+        if(isFeverFlag == true)
+        {
+            isFeverFlag = false;
+            addFeverBlock.OnNext(Unit.Default);
+        }
+        
     }
 
 

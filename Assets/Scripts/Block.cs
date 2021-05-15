@@ -11,14 +11,18 @@ public class Block : MonoBehaviour
     [SerializeField] private Sprite[] sprite;
     [SerializeField] private BlockType blockType;
     [SerializeField] private ParticleSystem particle;
-   
+    private float duration = 1.0f;
+
+    
+
 
     //テスト
     public int countID;
     public bool isMatch= false;
     public bool isCombo = false;
+    public bool isFever = true;
 
- 
+
 
     public void SetImage(BlockType type)
     {   
@@ -79,10 +83,25 @@ public class Block : MonoBehaviour
         int count =UnityEngine.Random.Range(0, 4);
         BlockType type = (BlockType)count;
         SetImage(type);
+       
     }
 
+    [System.Obsolete]
     void Update()
     {
-        
+        SetFeverParticle();
+    }
+
+    [System.Obsolete]
+    private void SetFeverParticle()
+    {
+        if (isFever == true)
+        {
+            float phi = Time.time / duration * 2 * Mathf.PI;
+            float amplitude = Mathf.Cos(phi) * 0.5f + 0.5f;
+           particle.startColor = Color.HSVToRGB(amplitude, 1, 1);
+           // image.color = Color.HSVToRGB(amplitude, 1, 1);
+           particle.Play();
+        }
     }
 }

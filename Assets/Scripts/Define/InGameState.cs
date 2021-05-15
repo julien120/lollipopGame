@@ -6,5 +6,6 @@
     DestroyBlock,
     AddBlocks,
     ChainBlocks,
+    AddFeverBlock,
     GameOver,
 }

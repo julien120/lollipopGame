@@ -17,6 +17,7 @@ public class InGameModel : MonoBehaviour
     public const int rowStage = 5;
     public const int colStage = 5;
     private const int MachCount = 3;
+    private const int ComboCount = 4;
     public float totalTime = 90;
 
     //通知発火
@@ -35,6 +36,10 @@ public class InGameModel : MonoBehaviour
     public ReactiveProperty<InGameState> inGameState = new ReactiveProperty<InGameState>();
     public IObservable<InGameState> IOInGameState => inGameState;
 
+    //feverアニメーションの発火
+    private readonly Subject<Unit> feverAnimation = new Subject<Unit>();
+    public IObservable<Unit> IOFeverAnimation => feverAnimation;
+
     //Block座標
     private Block[,] blockQueue;
     private Block startPosition;
@@ -52,6 +57,7 @@ public class InGameModel : MonoBehaviour
     private bool isHorFlag { get; set; } = true;
     private bool isVerFlag { get; set; } = true;
     private bool isChainFlag { get; set; } = false;
+    private bool isFeverFlag { get; set; } = false;
 
     private int combo { get; set; } = 0;
     private ComboTextAnimation comboAnimation;
@@ -109,7 +115,9 @@ public class InGameModel : MonoBehaviour
                 }
             }
         }
-        
+
+
+
         highCombo.Value = 0;
         combo = 0;
         inGameState.Value = InGameState.MoveBlock;
@@ -267,10 +275,22 @@ public class InGameModel : MonoBehaviour
 
     private async UniTaskVoid isMatchBlock()
     {
+
         for (int i = 1; i < 4; i++)
         {
             for (int j = 0; j < rowStage; j++)
             {
+                //fever
+                //if (blockQueue[i, j].isFever == true&& highCombo.Value==0)
+                //{
+                //    blockQueue[i, j].isMatch = true;
+                //    for (int k = i - 1; k < i + 1; k++)
+                //    {
+                //        if (k > 4 || k < 0) { return; }
+                //        blockQueue[k, k].isMatch = true;
+                //    }
+
+                //}
 
                 if (blockQueue[i, j].type() == blockQueue[i + 1, j].type() && blockQueue[i, j].type() == blockQueue[i - 1, j].type())
                 {
@@ -295,6 +315,22 @@ public class InGameModel : MonoBehaviour
         {
             for (int j = 1; j < 4; j++)
             {
+                //fever
+                if (blockQueue[i, j].isFever==true&& highCombo.Value == 0)
+                {
+                    blockQueue[i, j].isMatch = true;
+                    for(int k = i-1; k < i + 2; k++)
+                    {
+                        for (int l = j - 1; l < j + 2; l++)
+                        {
+
+                            if (k > 4 || k < 0) { return; }
+                            if (l > 4 || l < 0) { return; }
+                            blockQueue[k, l].isMatch = true;
+                        }
+                    }
+                    
+                }
 
                 if (blockQueue[i, j].type() == blockQueue[i, j + 1].type() && blockQueue[i, j].type() == blockQueue[i, j - 1].type())
                 {
@@ -313,6 +349,7 @@ public class InGameModel : MonoBehaviour
                 }
             }
         }
+        
     }
 
 
@@ -443,6 +480,13 @@ public class InGameModel : MonoBehaviour
     //何回かコンボするとfeverになる
     //fever玉を中心に3*3削除する
     //普通のidleに戻る
+    public void isFeverTime()
+    {
+        feverAnimation.OnNext(Unit.Default);
+        blockQueue[UnityEngine.Random.Range(0,4), UnityEngine.Random.Range(0, 4)].isFever = true;
+        inGameState.Value = InGameState.Idle;
+
+    }
 
 
 
@@ -470,6 +514,12 @@ public class InGameModel : MonoBehaviour
             }
             if (isChainFlag == false && count >= 24)
             {
+                //ComboCount
+                if (highCombo.Value > 1)
+                {
+                   
+                    inGameState.Value = InGameState.AddFeverBlock;
+                }
                 inGameState.Value = InGameState.Idle;
             }
         }
@@ -515,6 +565,8 @@ public class InGameModel : MonoBehaviour
         }
         isHorFlag = true;
         isVerFlag = true;
+
+
 
     }
 

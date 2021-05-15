@@ -30,10 +30,10 @@ public class InGamePresenter : MonoBehaviour
         inGameModel.IOHighCombo.Subscribe(IOHighCombo => inGameView.SetHigheCombo(IOHighCombo));
         inGameModel.IOSyntheticScore.Subscribe(IOSyntheticScore => inGameView.SetSyntheticScore(IOSyntheticScore));
 
-
+        inGameView.IOfeverBlock.Subscribe(_ => inGameModel.isFeverTime());
         inGameView.IORequestUserScore.Subscribe(IORequestUserScore => playFabController.UpdateUserScoreData(IORequestUserScore));
 
-        
+        inGameModel.IOFeverAnimation.Subscribe(_ => inGameView.SetFeverTextAnimation());
     }
 
 
