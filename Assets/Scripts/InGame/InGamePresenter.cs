@@ -19,19 +19,19 @@ public class InGamePresenter : MonoBehaviour
         inGameView.IOStartPos.Subscribe(IOStartPos => inGameModel.Idle(IOStartPos));
         inGameView.IOMovePos.Subscribe(IOMovePos => inGameModel.MoveBlock(IOMovePos));
 
-        inGameView.IOTransitionState.Subscribe(_ => inGameModel.TransitionState());
-        inGameView.IOMatchBlock.Subscribe(_ => inGameModel.MatchBlock());
+        inGameView.IOTransitionState.Subscribe(_ => inGameModel.TransitionState().Forget());
+        inGameView.IOMatchBlock.Subscribe(_ => inGameModel.MatchBlock().Forget());
         inGameView.IOAddBlock.Subscribe(_ => inGameModel.AddBlock());
 
         inGameView.IODestroyBlock.Subscribe(_ => inGameModel.DestroyBlockAnimation());
-        inGameView.IOChainBlock.Subscribe(_ => inGameModel.ChainBlock());
+        inGameView.IOChainBlock.Subscribe(_ => inGameModel.ChainBlock().Forget());
         inGameModel.IOTimerCount.Subscribe(IOTimerCount => inGameView.SetTimer(IOTimerCount));
         inGameModel.IOScore.Subscribe(IOScore => inGameView.SetScore(IOScore));
         inGameModel.IOHighCombo.Subscribe(IOHighCombo => inGameView.SetHigheCombo(IOHighCombo));
         inGameModel.IOSyntheticScore.Subscribe(IOSyntheticScore => inGameView.SetSyntheticScore(IOSyntheticScore));
 
         inGameView.IOfeverBlock.Subscribe(_ => inGameModel.isFeverTime());
-        inGameView.IORequestUserScore.Subscribe(IORequestUserScore => playFabController.UpdateUserScoreData(IORequestUserScore));
+        inGameView.IORequestUserScore.Subscribe(IORequestUserScore => playFabController.SubmitScore(IORequestUserScore));
 
         inGameModel.IOFeverAnimation.Subscribe(_ => inGameView.SetFeverTextAnimation());
     }

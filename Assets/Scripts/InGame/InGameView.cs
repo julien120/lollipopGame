@@ -272,6 +272,7 @@ public class InGameView : MonoBehaviour
         if (!isFlag)
         {
             requestUserScore.OnNext(highScore);
+            isFlag = true;
         }
     }
 

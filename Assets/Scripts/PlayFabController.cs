@@ -26,10 +26,11 @@ public class PlayFabController : MonoBehaviour
             CustomId = "100", //TODO:固有の番号を与えないとだめ
             CreateAccount = true
         },
-        result => {
+        result =>
+        {
             Debug.Log("ログイン成功! ! ");
-            CreateAccount("juli", "juli.com");//TODO
-            //シーン移動メソッドの呼び込み
+            RequestLeaderboard();
+
 
         },
         error => { Debug.Log(error.GenerateErrorReport()); });
@@ -37,23 +38,23 @@ public class PlayFabController : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// 1.スクリプトからキーを設定する場合はUpdateUserDataメソッドを用いる
-    /// </summary>
-    private void CreateAccount(string name,string email)
-    {
-        PlayFabClientAPI.UpdateUserData(
-        new UpdateUserDataRequest
-        {
-            Data = new Dictionary<string, string>()
-            {
-                {"Name", name},
-                {"Email", email},
-                {"Score","0" }
-            }
-        }, result => { Debug.Log("ログイン成功! ! "); },
-        error => { Debug.Log(error.GenerateErrorReport()); });
-    }
+    ///// <summary>
+    ///// 1.スクリプトからキーを設定する場合はUpdateUserDataメソッドを用いる
+    ///// </summary>
+    //private void CreateAccount(string name,string email)
+    //{
+    //    PlayFabClientAPI.UpdateUserData(
+    //    new UpdateUserDataRequest
+    //    {
+    //        Data = new Dictionary<string, string>()
+    //        {
+    //            {"Name", name},
+    //            {"Email", email},
+    //            {"Score","0" }
+    //        }
+    //    }, result => { Debug.Log("ログイン成功! ! "); },
+    //    error => { Debug.Log(error.GenerateErrorReport()); });
+    //}
 
     /// <summary>
     /// プレイヤーデータを取得する
@@ -124,6 +125,7 @@ public class PlayFabController : MonoBehaviour
             Debug.Log(result.Username);
             Debug.Log(RegisterData.Password);
             Debug.Log(RegisterData.Email);
+            PressLoginButton();
         }, error => Debug.Log(error.GenerateErrorReport()));
     }
 
@@ -170,6 +172,82 @@ public class PlayFabController : MonoBehaviour
         signUpCanvas.SetActive(true);
     }
 
+    public void SubmitScore(int playerScore)
+    {
+        PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest
+         {
+                Statistics = new List<StatisticUpdate>
+             {
+                 new StatisticUpdate
+                 {
+                    StatisticName = "HighScoreRanking",
+
+                    Value = playerScore
+                 }
+              }
+              }, result =>
+                {
+                    Debug.Log("スコア送信完了! ");
+                    SubmitName();
+                }, error => {
+                    Debug.Log(error.GenerateErrorReport());
+          });
+
+    }
+
+    private void SubmitName()
+    {
+        PlayFabClientAPI.UpdateUserTitleDisplayName(
+        new UpdateUserTitleDisplayNameRequest
+        {
+            DisplayName = name
+        },
+        result =>
+        {
+            Debug.Log("Set display name was succeeded.");
+        },
+        error =>
+        {
+            Debug.LogError(error.GenerateErrorReport());
+        }
+        );
+    }
+
+
+    [SerializeField] private GameObject rankingElemnt;
+    [SerializeField] private Transform rankingCanvas;
+    //[SerializeField]private RankElementView rankElementView;
+
+    public void RequestLeaderboard()
+    {
+        PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
+        {
+            StatisticName = "HighScoreRanking",
+            StartPosition = 0,
+            MaxResultsCount = 20
+        }, result => {
+            //result.Leaderboard.ForEach(x => Debug.Log($"{x.Position + 1}位:{x.DisplayName} " +
+            //$"スコア {x.StatValue}")
+            result.Leaderboard.ForEach(x => {
+                //Instantiate(rankingElemnt, rankingCanvas, false);
+                var rankElementView = Instantiate(rankingElemnt, rankingCanvas, false).GetComponent<RankElementView>();
+                rankElementView.RankNameText.text = x.DisplayName;
+                rankElementView.RankRankText.text = (x.Position + 1).ToString();
+                rankElementView.RankScoreText.text = x.StatValue.ToString();
+
+                Debug.Log($"{x.Position + 1}位:{x.DisplayName} " + $"スコア {x.StatValue}");
+           }) ;
+        }, error =>
+        {
+            Debug.Log(error.GenerateErrorReport());
+        });
+    }
+
+    private void Start()
+    {
+       // SubmitUserData();
+        
+    }
 
 
 
