@@ -1067,6 +1067,8 @@ MonoBehaviour:
   emailText: {fileID: 0}
   loginCanvas: {fileID: 0}
   signUpCanvas: {fileID: 0}
+  rankingElemnt: {fileID: 0}
+  rankingCanvas: {fileID: 0}
 --- !u!1 &955615758
 GameObject:
   m_ObjectHideFlags: 0
@@ -2119,8 +2121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 234.69995, y: 425.19995}
-  m_SizeDelta: {x: 167.5, y: 98.2}
+  m_AnchoredPosition: {x: 214.63106, y: 451.80298}
+  m_SizeDelta: {x: 259.9104, y: 56.1953}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1569955810
 MonoBehaviour:
@@ -2149,7 +2151,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 4
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

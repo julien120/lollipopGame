@@ -87,11 +87,11 @@ public class InGameView : MonoBehaviour
         backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
         borderDialog.transform.localScale = Vector3.zero;
 
-        if (PlayFabController.name == null)
+        if (PlayFabController.names == null)
         {
             return;
         }
-        userNameText.text = PlayFabController.name;
+        userNameText.text = PlayFabController.names;
 
         //後々使うかも
         this.UpdateAsObservable()
@@ -272,7 +272,7 @@ public class InGameView : MonoBehaviour
         if (!isFlag)
         {
             requestUserScore.OnNext(highScore);
-            isFlag = true;
+            
         }
     }
 

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayFabController : MonoBehaviour
 {
     public string email;
-    public static string name;
+    public static string names;
     public string pass;
     [SerializeField] InputField userNameText;
     [SerializeField] InputField passText;
@@ -116,7 +116,7 @@ public class PlayFabController : MonoBehaviour
             TitleId = PlayFabSettings.TitleId,
             Email = email,
             Password = pass,
-            Username = name
+            Username = names
         };
 
         PlayFabClientAPI.RegisterPlayFabUser(RegisterData, result =>
@@ -148,7 +148,7 @@ public class PlayFabController : MonoBehaviour
 
     public void InputName()
     {
-        name = userNameText.text;
+        names = userNameText.text;
     }
     public void InputPass()
     {
@@ -200,7 +200,7 @@ public class PlayFabController : MonoBehaviour
         PlayFabClientAPI.UpdateUserTitleDisplayName(
         new UpdateUserTitleDisplayNameRequest
         {
-            DisplayName = name
+            DisplayName = names
         },
         result =>
         {

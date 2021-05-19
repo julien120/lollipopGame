@@ -355,7 +355,7 @@ public class InGameModel : MonoBehaviour
 
     //TODO:横縦連鎖のアニメーション
     //async UniTask 一個ずつ処理する場合はシーケンスをawaitする。
-    public async UniTask DestroyBlockAnimation()
+    public async UniTaskVoid DestroyBlockAnimation()
     {
         //var hoge = blockQueue[i, j].gameObject.GetComponent<Image>();
 
@@ -387,6 +387,7 @@ public class InGameModel : MonoBehaviour
                 
                 //   .OnComplete(() => Destroy(block.gameObject));
             }
+            
         }
 
         inGameState.Value = InGameState.AddBlocks;
@@ -483,7 +484,7 @@ public class InGameModel : MonoBehaviour
     public void isFeverTime()
     {
         feverAnimation.OnNext(Unit.Default);
-        blockQueue[UnityEngine.Random.Range(0,4), UnityEngine.Random.Range(0, 4)].isFever = true;
+        blockQueue[UnityEngine.Random.Range(0,4), UnityEngine.Random.Range(0, 4)].isFever = false;
         inGameState.Value = InGameState.Idle;
 
     }
