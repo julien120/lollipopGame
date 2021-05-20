@@ -40,6 +40,10 @@ public class InGameModel : MonoBehaviour
     private readonly Subject<Unit> feverAnimation = new Subject<Unit>();
     public IObservable<Unit> IOFeverAnimation => feverAnimation;
 
+    //ドロップコインアニメーションの発火
+    private readonly Subject<(Vector3,int)> dropCoinAnimation = new Subject<(Vector3, int)>();
+    public IObservable<(Vector3, int)> IODropCoinAnimationn => dropCoinAnimation;
+
     //Block座標
     private Block[,] blockQueue;
     private Block startPosition;
@@ -381,7 +385,9 @@ public class InGameModel : MonoBehaviour
                     //.SetDelay(0.05f)
                     .OnComplete(() =>
                     {
-                        
+                        //Vector3 potion = block.gameObject.transform;
+                        dropCoinAnimation.OnNext((block.transform.position, 2));
+                       
                         DestroyBlock(block).Forget();
                     });
                 
@@ -484,7 +490,7 @@ public class InGameModel : MonoBehaviour
     public void isFeverTime()
     {
         feverAnimation.OnNext(Unit.Default);
-        blockQueue[UnityEngine.Random.Range(0,4), UnityEngine.Random.Range(0, 4)].isFever = false;
+        blockQueue[UnityEngine.Random.Range(0,4), UnityEngine.Random.Range(0, 4)].isFever = true;
         inGameState.Value = InGameState.Idle;
 
     }

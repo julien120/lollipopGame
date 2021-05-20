@@ -9,6 +9,7 @@ public class InGamePresenter : MonoBehaviour
     [SerializeField] private InGameModel inGameModel;
     [SerializeField] private InGameView inGameView;
     [SerializeField] private PlayFabController playFabController;
+    [SerializeField] private feverAnimation dropCoinAnimation;
 
 
     private void Awake()
@@ -34,6 +35,7 @@ public class InGamePresenter : MonoBehaviour
         inGameView.IORequestUserScore.Subscribe(IORequestUserScore => playFabController.SubmitScore(IORequestUserScore));
 
         inGameModel.IOFeverAnimation.Subscribe(_ => inGameView.SetFeverTextAnimation());
+        inGameModel.IODropCoinAnimationn.Subscribe(IODrop => dropCoinAnimation.AddCoins(IODrop.Item1, IODrop.Item2));
     }
 
 

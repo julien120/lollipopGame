@@ -4889,7 +4889,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8976722522245053243}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1e373d120c67496699e4eea677467c6, type: 3}
   m_Name: 
@@ -4904,6 +4904,8 @@ MonoBehaviour:
   particle: {fileID: 4301644143278850055}
   countID: 0
   isMatch: 0
+  isCombo: 0
+  isFever: 0
 --- !u!212 &3467894834645650014
 SpriteRenderer:
   m_ObjectHideFlags: 0

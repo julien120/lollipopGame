@@ -119,15 +119,15 @@ public class InGameView : MonoBehaviour
                 break;
 
             case global::InGameState.DestroyBlock:
-                DestroyBlocks();
+                DestroyBlocks().Forget();
                 break;
 
             case global::InGameState.AddBlocks:
-                AddBlocks();
+                AddBlocks().Forget();
                 break;
 
             case global::InGameState.ChainBlocks:
-                ChainBlocks();
+                ChainBlocks().Forget();
                 break;
 
             case global::InGameState.AddFeverBlock:
@@ -242,7 +242,7 @@ public class InGameView : MonoBehaviour
                 .Join(textAnimator.DOPunchCharScale(i, 1.5f, 0.1f))
                 .Play()
                 .OnComplete(() => {
-                    DOVirtual.DelayedCall(1.5f, () => Destroy(feverTextAnimation));
+                    DOVirtual.DelayedCall(1.5f, () => feverTextAnimation.alpha = 0);
                     
                 });
 
