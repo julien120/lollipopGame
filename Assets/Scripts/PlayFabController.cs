@@ -29,7 +29,7 @@ public class PlayFabController : MonoBehaviour
         result =>
         {
             Debug.Log("ログイン成功! ! ");
-            RequestLeaderboard();
+            
 
 
         },
@@ -218,7 +218,7 @@ public class PlayFabController : MonoBehaviour
     [SerializeField] private Transform rankingCanvas;
     //[SerializeField]private RankElementView rankElementView;
 
-    public void RequestLeaderboard()
+    public void RequestRankingData()
     {
         PlayFabClientAPI.GetLeaderboard(new GetLeaderboardRequest
         {
@@ -245,7 +245,7 @@ public class PlayFabController : MonoBehaviour
 
     private void Start()
     {
-       // SubmitUserData();
+       SubmitUserData();
         
     }
 

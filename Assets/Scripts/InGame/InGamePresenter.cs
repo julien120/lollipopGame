@@ -36,6 +36,8 @@ public class InGamePresenter : MonoBehaviour
 
         inGameModel.IOFeverAnimation.Subscribe(_ => inGameView.SetFeverTextAnimation());
         inGameModel.IODropCoinAnimationn.Subscribe(IODrop => dropCoinAnimation.AddCoins(IODrop.Item1, IODrop.Item2));
+
+        
     }
 
 
@@ -52,5 +54,9 @@ public class InGamePresenter : MonoBehaviour
     private void Update()
     {
         inGameModel.SetTimer();
+    }
+    private void OpenRankingDialog()
+    {
+
     }
 }

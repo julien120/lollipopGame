@@ -62,6 +62,7 @@ public class feverAnimation : MonoBehaviour
     void PrepareCoins()
 	{
 		GameObject coin;
+		//50=maxCoinsとは別に一旦仮設定
 		for (int i = 0; i < maxCoins; i++)
 		{
 			coin = Instantiate(animatedCoinPrefab);
@@ -77,14 +78,14 @@ public class feverAnimation : MonoBehaviour
 	{
 		for (int i = 0; i < amount; i++)
 		{
-			//check if there's coins in the pool
+			//coinsQueue.Count
 			if (coinsQueue.Count > 0)
 			{
-				//extract a coin from the pool
+				
 				GameObject coin = coinsQueue.Dequeue();
 				coin.SetActive(true);
 				
-				//move coin to the collected coin pos
+				
 				coin.transform.position = collectedCoinPosition + new Vector3(Random.Range(-spread, spread), 0f, 0f);
 
 				//animate coin to target position
@@ -92,7 +93,6 @@ public class feverAnimation : MonoBehaviour
 				coin.transform.DOMove(targetPosition, duration)
 				.SetEase(easeType)
 				.OnComplete(() => {
-					//executes whenever coin reach target position
 					coin.SetActive(false);
 					coinsQueue.Enqueue(coin);
 

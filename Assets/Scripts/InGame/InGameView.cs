@@ -25,7 +25,7 @@ public class InGameView : MonoBehaviour
 
     //オブジェクト参照：ダイアログ
     [SerializeField] private Button restartButton;
-    [SerializeField] private Button backTitleButton;
+    public Button backTitleButton;
     [SerializeField] private Transform borderDialog;
     [SerializeField] private TextMeshProUGUI totalScoreText;
     [SerializeField] private TextMeshProUGUI totalComboText;
@@ -34,6 +34,8 @@ public class InGameView : MonoBehaviour
     private DOTweenTMPAnimator textAnimator;
     private bool isFlag { get; set; } = true;//TODO変更
     private bool isFeverFlag { get; set; } = true;
+
+    [SerializeField] private GameObject rankingDialog;
 
 
     //インターフェース使ってPC/スマホ対応するとき用 //まだ使用してない
@@ -84,7 +86,9 @@ public class InGameView : MonoBehaviour
     {
         feverTextAnimation.alpha = 0;
         restartButton.onClick.AddListener(SceneController.Instance.LoadInGameScene);
-        backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
+        // backTitleButton.onClick.AddListener(SceneController.Instance.LoadTitleScene);
+        //rankingPage考え中
+        backTitleButton.onClick.AddListener(OpenRankignDialog);
         borderDialog.transform.localScale = Vector3.zero;
 
         if (PlayFabController.names == null)
@@ -242,7 +246,7 @@ public class InGameView : MonoBehaviour
                 .Join(textAnimator.DOPunchCharScale(i, 1.5f, 0.1f))
                 .Play()
                 .OnComplete(() => {
-                    DOVirtual.DelayedCall(1.5f, () => feverTextAnimation.alpha = 0);
+                    DOVirtual.DelayedCall(1.5f, () => feverTextAnimation.text = "");
                     
                 });
 
@@ -285,6 +289,10 @@ public class InGameView : MonoBehaviour
         }
         
     }
-
+    
+    private void OpenRankignDialog()
+    {
+        rankingDialog.SetActive(true);
+    }
 
 }
