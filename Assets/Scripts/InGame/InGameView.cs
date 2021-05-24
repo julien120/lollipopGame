@@ -255,7 +255,7 @@ public class InGameView : MonoBehaviour
        
     }
 
-
+    bool isRequestRanking = true;
     /// <summary>
     /// 1.ポップアップを表示
     /// 2.スコアを表示(スコアオブジェクトにはもう一度遊ぶボタンを付与)
@@ -265,19 +265,23 @@ public class InGameView : MonoBehaviour
     {
         
         if (isFlag)
-        { 
+        {
+            isFlag = false;
             borderDialog.transform.DOScale(1f, 0.6f).SetEase(Ease.OutSine);
             totalComboText.DOCounter(0, highComboScore, 1f).SetEase(Ease.Linear);
             totalSynthelizeText.DOCounter(0, syntheticScore, 1f).SetEase(Ease.Linear).SetDelay(1f);
 
-            totalScoreText.DOCounter(0, highScore, 3f).SetEase(Ease.Linear).SetDelay(2.5f); ;
+            totalScoreText.DOCounter(0, highScore, 3f).SetEase(Ease.Linear).SetDelay(2.5f);
+            if (isRequestRanking)
+            {
+                requestUserScore.OnNext(highScore);
+                isRequestRanking = false;
+
+            }
         }
-        isFlag = false;
-        if (!isFlag)
-        {
-            requestUserScore.OnNext(highScore);
-            
-        }
+        
+
+        
     }
 
     private void AddFeverBlock()

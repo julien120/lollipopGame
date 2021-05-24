@@ -16,7 +16,7 @@ public class PlayFabController : MonoBehaviour
     [SerializeField] GameObject loginCanvas;
     [SerializeField] GameObject signUpCanvas;
 
-    //↓練習&試行錯誤中
+    //デバック時よう
     private void SubmitUserData()
     {
         PlayFabClientAPI.LoginWithCustomID(
@@ -29,7 +29,7 @@ public class PlayFabController : MonoBehaviour
         result =>
         {
             Debug.Log("ログイン成功! ! ");
-            
+            names = "f5アタック";
 
 
         },
@@ -188,19 +188,20 @@ public class PlayFabController : MonoBehaviour
               }, result =>
                 {
                     Debug.Log("スコア送信完了! ");
-                    SubmitName();
+                   // SubmitName(names);
                 }, error => {
                     Debug.Log(error.GenerateErrorReport());
           });
 
     }
 
-    private void SubmitName()
+    private void SubmitName(string username)
     {
+        if (names == null) { return; }
         PlayFabClientAPI.UpdateUserTitleDisplayName(
         new UpdateUserTitleDisplayNameRequest
         {
-            DisplayName = names
+            DisplayName = username
         },
         result =>
         {
@@ -243,7 +244,7 @@ public class PlayFabController : MonoBehaviour
         });
     }
 
-    private void Start()
+    private void Awake()
     {
        SubmitUserData();
         
