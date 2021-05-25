@@ -15,6 +15,8 @@ public class PlayFabController : MonoBehaviour
     [SerializeField] InputField emailText;
     [SerializeField] GameObject loginCanvas;
     [SerializeField] GameObject signUpCanvas;
+    [SerializeField] Text signupErrorText;
+    [SerializeField] Text loginErrorText;
 
     //デバック時よう
     private void SubmitUserData()
@@ -121,12 +123,18 @@ public class PlayFabController : MonoBehaviour
 
         PlayFabClientAPI.RegisterPlayFabUser(RegisterData, result =>
         {
+            signupErrorText.gameObject.SetActive(false);
             Debug.Log("新規登録ok");
             Debug.Log(result.Username);
             Debug.Log(RegisterData.Password);
             Debug.Log(RegisterData.Email);
             PressLoginButton();
-        }, error => Debug.Log(error.GenerateErrorReport()));
+        }, error =>
+        {
+            signupErrorText.gameObject.SetActive(true);
+            Debug.Log(error.GenerateErrorReport());
+            signupErrorText.text = error.GenerateErrorReport();
+        });
     }
 
 
@@ -141,9 +149,14 @@ public class PlayFabController : MonoBehaviour
         PlayFabClientAPI.LoginWithEmailAddress(LoginData, result =>
         {
             Debug.Log("ログイン成功！");
+            loginErrorText.gameObject.SetActive(false);
             SceneController.Instance.LoadInGameScene();
             
-        }, error => Debug.Log(error.GenerateErrorReport()));
+        }, error => {
+            loginErrorText.gameObject.SetActive(true);
+            Debug.Log(error.GenerateErrorReport());
+            loginErrorText.text = error.GenerateErrorReport();
+        });
     }
 
     public void InputName()
@@ -188,7 +201,7 @@ public class PlayFabController : MonoBehaviour
               }, result =>
                 {
                     Debug.Log("スコア送信完了! ");
-                   // SubmitName(names);
+                   SubmitName(names);
                 }, error => {
                     Debug.Log(error.GenerateErrorReport());
           });
@@ -246,8 +259,9 @@ public class PlayFabController : MonoBehaviour
 
     private void Awake()
     {
-       SubmitUserData();
-        
+       //SubmitUserData();
+    
+
     }
 
 
